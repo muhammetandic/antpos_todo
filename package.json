@@ -12,11 +12,14 @@
   "license": "ISC",
   "description": "Todo app created by AntPos",
   "dependencies": {
-    "express": "^4.19.2"
+    "express": "^4.19.2",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.3.2"
   },
   "devDependencies": {
     "@eslint/js": "^9.1.1",
     "@types/express": "^4.17.21",
+    "@types/jsonwebtoken": "^9.0.6",
     "@types/node": "^20.12.7",
     "eslint": "^8.57.0",
     "eslint-plugin-prettier": "^5.1.3",
