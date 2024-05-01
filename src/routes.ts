@@ -1,7 +1,7 @@
 import express, { Router } from "express";
 import { todoRouter } from "./features/todo/routes.js";
-import { jwtMiddleware } from "./services/jwt.js";
 import { authRouter } from "./features/auth/routes.js";
+import { jwtMiddleware } from "./middlewares/jwt.js";
 
 export const router = express.Router();
 const apiRouter: Router = express.Router();
