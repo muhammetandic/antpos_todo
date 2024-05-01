@@ -1,6 +1,7 @@
 import express, { Express } from "express";
 import { connectMongo } from "./services/mongo.js";
 import { router } from "./routes.js";
+import { errorHandler } from "./middlewares/error-handler.js";
 
 const port = process.env.PORT || "5000";
 const jsonParser = express.json();
@@ -12,6 +13,8 @@ app.use(jsonParser);
 app.use(urlEncodedParser);
 
 app.use(router);
+
+app.use(errorHandler);
 
 await connectMongo();
 
