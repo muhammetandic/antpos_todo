@@ -1,11 +1,6 @@
-import { NextFunction, Request, Response } from "express";
-import jwt, { JwtPayload } from "jsonwebtoken";
+import jwt from "jsonwebtoken";
 
-interface AuthenticatedRequest extends Request {
-  user: JwtPayload | string;
-}
-
-export function createToken(userId: string, email: string) {
+export function createToken(userId: string, email: string, expireDuration: number) {
   try {
     const secret = process.env.JWT_SECRET;
     return jwt.sign(
@@ -14,7 +9,7 @@ export function createToken(userId: string, email: string) {
         email,
       },
       secret,
-      { expiresIn: "1h" },
+      { expiresIn: expireDuration },
     );
   } catch (err) {
     throw new Error("Error in creating token", err);
@@ -27,16 +22,5 @@ export function verifyToken(token: string) {
     return jwt.verify(token, secret);
   } catch (err) {
     throw new Error("Error in verifying token", err);
-  }
-}
-
-export function jwtMiddleware(req: AuthenticatedRequest, res: Response, next: NextFunction) {
-  const token = req.headers.authorization;
-  if (token) {
-    const user = verifyToken(token);
-    req.user = user;
-    next();
-  } else {
-    res.status(401).json({ error: "Unauthorized" });
   }
 }
