@@ -10,7 +10,7 @@ export const authRouter: Router = express.Router();
 
 authRouter.post("/signin", signin);
 authRouter.post("/signup", signup);
-authRouter.post("/confirmemail", confirmEmail);
+// authRouter.post("/confirmemail", confirmEmail);
 authRouter.post("/createpassword", createPassword);
 authRouter.post("/changepassword", changePassword);
 
