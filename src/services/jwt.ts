@@ -1,26 +1,25 @@
 import jwt from "jsonwebtoken";
 
-export function createToken(userId: string, email: string, expireDuration: number) {
+export function createToken(email: string, expireDuration: number) {
+  const secret = process.env.JWT_SECRET as string;
   try {
-    const secret = process.env.JWT_SECRET;
     return jwt.sign(
       {
-        userId,
         email,
       },
       secret,
       { expiresIn: expireDuration },
     );
   } catch (err) {
-    throw new Error("Error in creating token", err);
+    throw new jwt.JsonWebTokenError("error when creating token");
   }
 }
 
 export function verifyToken(token: string) {
+  const secret = process.env.JWT_SECRET as string;
   try {
-    const secret = process.env.JWT_SECRET;
     return jwt.verify(token, secret);
   } catch (err) {
-    throw new Error("Error in verifying token", err);
+    throw new jwt.JsonWebTokenError("error when verifying token");
   }
 }
