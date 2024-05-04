@@ -8,3 +8,7 @@ export type SetPassword = {
   password: string;
   token: string;
 };
+
+export type ForgottenPassword = {
+  email: string;
+};

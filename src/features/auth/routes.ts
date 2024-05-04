@@ -1,8 +1,8 @@
 import express, { Router, Request, Response, NextFunction } from "express";
-import { createToken } from "../../services/jwt.js";
+import { createJwtToken } from "../../services/jwt.js";
 import { IUser, User } from "./schema.js";
 import { createHash } from "crypto";
-import { SignUp, SetPassword } from "./models.js";
+import { SignUp, SetPassword, ForgottenPassword } from "./models.js";
 import { TypedRequestBody } from "../../value-objects/request.js";
 import { encrypt, decrypt } from "../../services/crypt.js";
 import { asyncHandler } from "../../value-objects/asyncHandler.js";
@@ -15,7 +15,12 @@ export const authRouter: Router = express.Router();
 authRouter.post("/signin", asyncHandler(signin));
 authRouter.post("/signup", asyncHandler(signup));
 authRouter.post("/setpassword", asyncHandler(setPassword));
-authRouter.post("/changepassword", changePassword);
+authRouter.post("/forgotpassword", asyncHandler(forgotPassword));
+
+const createToken = (email: string) =>
+  createHash("sha256")
+    .update(email + Date.now())
+    .digest("hex");
 
 async function signin(req: Request, res: Response, _next: NextFunction) {
   const { email, password } = req.body;
@@ -30,7 +35,7 @@ async function signin(req: Request, res: Response, _next: NextFunction) {
     return res.status(400).json({ error: "incorrect password" });
   }
 
-  const token = createToken(email, oneHour);
+  const token = createJwtToken(email, oneHour);
   return res.status(200).json({ email, token, expiresIn });
 }
 
@@ -42,10 +47,7 @@ async function signup(req: TypedRequestBody<SignUp>, res: Response, _next: NextF
     return res.status(400).json({ error: "email already exist" });
   }
 
-  const token = createHash("sha256")
-    .update(email + Date.now())
-    .digest("hex");
-
+  const token = createToken(email);
   const tokenExpiresAt = new Date(Date.now() + thirtyMinutes);
 
   const user = new User<IUser>({
@@ -79,17 +81,29 @@ async function setPassword(req: TypedRequestBody<SetPassword>, res: Response, _n
 
   const { encryptedText, salt } = encrypt(password);
 
-  await User.updateOne(
-    { email: email, token: token },
-    { password: encryptedText, salt, token: null, tokenExpiresAt: null, updatedAt: new Date(Date.now()) },
-  );
+  await user.updateOne({
+    password: encryptedText,
+    salt,
+    token: null,
+    tokenExpiresAt: null,
+    updatedAt: new Date(Date.now()),
+  });
 
   return res.status(200).json({});
 }
 
-function changePassword(req: Request, res: Response, next: NextFunction) {
-  throw new Error("not implemented");
-  const { email, password } = req.body;
-  res.status(200).json({ email, password });
-  next();
+async function forgotPassword(req: TypedRequestBody<ForgottenPassword>, res: Response, _next: NextFunction) {
+  const { email } = req.body;
+  const user = await User.findOne({ email: email, isDeleted: false });
+
+  if (!user) {
+    return res.status(400).json({ error: "user not found" });
+  }
+
+  const token = createToken(email);
+  const tokenExpiresAt = new Date(Date.now() + thirtyMinutes);
+
+  await user.updateOne({ token, tokenExpiresAt, updatedAt: new Date(Date.now()) });
+
+  return res.status(200).json({ email, token });
 }
