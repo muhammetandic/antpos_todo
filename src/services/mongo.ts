@@ -1,5 +1,7 @@
 import mongoose from "mongoose";
 
+const mongoUri = process.env.MONGO_URI as string;
+
 mongoose.connection.once("open", () => {
   console.log("[mongo]: MongoDB connection ready");
 });
@@ -27,5 +29,5 @@ mongoose.connection.on("SIGINT", () => {
 });
 
 export async function connectMongo() {
-  await mongoose.connect(process.env.MONGO_URI);
+  await mongoose.connect(mongoUri);
 }
