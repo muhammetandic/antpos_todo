@@ -1,5 +1,5 @@
 import { NextFunction, Response, Request } from "express";
-import { verifyToken } from "../services/jwt.js";
+import { verifyJwtToken } from "../services/jwt.js";
 import { JwtPayload } from "jsonwebtoken";
 
 interface AuthenticatedRequest extends Request {
@@ -9,7 +9,7 @@ interface AuthenticatedRequest extends Request {
 export function jwtMiddleware(req: Request, res: Response, next: NextFunction) {
   const token = req.headers.authorization;
   if (token) {
-    const user = verifyToken(token);
+    const user = verifyJwtToken(token);
     (req as AuthenticatedRequest).user = user;
     next();
   } else {

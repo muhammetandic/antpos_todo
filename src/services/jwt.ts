@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 
-export function createToken(email: string, expireDuration: number) {
+export function createJwtToken(email: string, expireDuration: number) {
   const secret = process.env.JWT_SECRET as string;
   try {
     return jwt.sign(
@@ -15,7 +15,7 @@ export function createToken(email: string, expireDuration: number) {
   }
 }
 
-export function verifyToken(token: string) {
+export function verifyJwtToken(token: string) {
   const secret = process.env.JWT_SECRET as string;
   try {
     return jwt.verify(token, secret);
