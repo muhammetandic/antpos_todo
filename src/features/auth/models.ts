@@ -7,6 +7,7 @@ export type SetPassword = {
   email: string;
   password: string;
   token: string;
+  code: string;
 };
 
 export type ForgottenPassword = {
