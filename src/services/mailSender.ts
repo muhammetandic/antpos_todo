@@ -10,7 +10,7 @@ const transport: Transporter = nodemailer.createTransport({
 });
 
 const setMailOptions = (to: string, subject: string, template: string, context?: object) => ({
-  from: process.env.MAIL_USER,
+  from: `antpos-todo <process.env.MAIL_USER>`,
   to,
   subject,
   template: template,
