@@ -94,11 +94,15 @@ async function setPassword(req: TypedRequestBody<SetPassword>, res: Response, _n
     return res.status(400).json({ error: "invalid code" });
   }
 
-  const { encryptedText, salt } = encrypt(password);
+  const encrypted = encrypt(password);
+
+  if (encrypted === null) {
+    return res.status(400).json({ error: "password encryption failed" });
+  }
 
   await user.updateOne({
-    password: encryptedText,
-    salt,
+    password: encrypted?.encryptedText,
+    salt: encrypted?.salt,
     token: null,
     tokenExpiresAt: null,
     code: null,
