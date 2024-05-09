@@ -12,6 +12,9 @@ const encryptionIV = (secret_iv: string) =>
 const method = process.env.ENCRYPTION_METHOD || "aes-256-cbc";
 
 export function encrypt(plainText: string) {
+  if (!plainText) {
+    return null;
+  }
   const iv = crypto.randomBytes(16).toString("hex");
   const cipher = crypto.createCipheriv(method, key, encryptionIV(iv));
   return {
@@ -21,7 +24,15 @@ export function encrypt(plainText: string) {
 }
 
 export function decrypt(encryptedText: string, hashIV: string) {
+  if (!encryptedText || !hashIV) {
+    return null;
+  }
   const buff = Buffer.from(encryptedText, "base64");
   const decipher = crypto.createDecipheriv(method, key, encryptionIV(hashIV));
-  return decipher.update(buff.toString("utf8"), "hex", "utf8") + decipher.final("utf8");
+  try {
+    const decrypted = decipher.update(buff.toString("utf8"), "hex", "utf8") + decipher.final("utf8");
+    return decrypted;
+  } catch (error) {
+    throw new Error("Decryption failed");
+  }
 }
