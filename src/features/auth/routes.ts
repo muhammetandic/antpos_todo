@@ -7,7 +7,7 @@ import { TypedRequestBody } from "../../helpers/value-objects/request.js";
 import { encrypt, decrypt } from "../../services/crypt.js";
 import { asyncHandler } from "../../helpers/value-objects/asyncHandler.js";
 import { createCode } from "../../services/random-code-generator.js";
-import { sendEmail } from "../../services/mailSender.js";
+import { sendEmail } from "../../services/mail-sender.js";
 
 const thirtyMinutes = 30 * 60 * 1000;
 const oneHour = 60 * 60 * 1000;

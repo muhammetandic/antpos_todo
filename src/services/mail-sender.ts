@@ -1,7 +1,7 @@
 import nodemailer, { Transporter } from "nodemailer";
 import hbs, { NodemailerExpressHandlebarsOptions } from "nodemailer-express-handlebars";
 
-const transport: Transporter = nodemailer.createTransport({
+export const transport: Transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
     user: process.env.MAIL_USER,
@@ -9,7 +9,7 @@ const transport: Transporter = nodemailer.createTransport({
   },
 });
 
-const setMailOptions = (to: string, subject: string, template: string, context?: object) => ({
+export const setMailOptions = (to: string, subject: string, template: string, context?: object) => ({
   from: `antpos-todo <process.env.MAIL_USER>`,
   to,
   subject,
