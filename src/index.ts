@@ -19,5 +19,5 @@ app.use(errorHandler);
 await connectMongo();
 
 app.listen(port, () => {
-  console.log(`[server]: Server is running on http://localhost: ${port}`);
+  console.log(`[server]: Server is running on http://localhost:${port}`);
 });
