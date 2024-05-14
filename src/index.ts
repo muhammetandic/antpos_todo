@@ -1,4 +1,5 @@
 import express, { Express } from "express";
+import morgan from "morgan";
 import { connectMongo } from "./services/mongo.js";
 import { router } from "./routes.js";
 import { errorHandler } from "./middlewares/error-handler.js";
@@ -11,6 +12,7 @@ const app: Express = express();
 
 app.use(jsonParser);
 app.use(urlEncodedParser);
+app.use(morgan("common"));
 
 app.use(router);
 
