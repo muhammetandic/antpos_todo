@@ -1,0 +1,16 @@
+services:
+  antpos-todo:
+    container_name: antpos-todo
+    restart: always
+    build: .
+    ports:
+      - "5200:5200"
+    links:
+      - mongo
+  mongo:
+    container_name: mongo
+    image: mongo
+    volumes:
+      - ./mongo:/data/db
+    ports:
+      - "27017:27017"
