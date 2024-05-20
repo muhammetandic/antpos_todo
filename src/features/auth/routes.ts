@@ -8,6 +8,7 @@ import { encrypt, decrypt } from "../../services/crypt.js";
 import { asyncHandler } from "../../helpers/value-objects/asyncHandler.js";
 import { createCode } from "../../services/random-code-generator.js";
 import { sendEmail } from "../../services/mail-sender.js";
+import { EMAIL_TEMPLATES } from "../../services/enums/email-templates.js";
 
 const thirtyMinutes = 30 * 60 * 1000;
 const oneHour = 60 * 60 * 1000;
@@ -65,11 +66,16 @@ async function signup(req: TypedRequestBody<SignUp>, res: Response, _next: NextF
 
   await user.save();
 
-  await sendEmail(email, "yeni kayıt", "signup", {
-    name: user.name,
-    email: user.email,
-    code: code,
-    token: token,
+  await sendEmail({
+    to: email,
+    subject: "yeni kayıt",
+    template: EMAIL_TEMPLATES.SIGNUP,
+    context: {
+      name: name,
+      email: email,
+      code: code,
+      token: token,
+    },
   });
 
   return res.status(200).json({ email, token });
@@ -126,11 +132,16 @@ async function forgotPassword(req: TypedRequestBody<ForgottenPassword>, res: Res
 
   await user.updateOne({ token, tokenExpiresAt, code, updatedAt: new Date(Date.now()) });
 
-  await sendEmail(email, "şifre sıfırlama", "forgotten-password", {
-    name: user.name,
-    code: code,
-    email: user.email,
-    token: token,
+  await sendEmail({
+    to: email,
+    subject: "sifre sıfırlama",
+    template: EMAIL_TEMPLATES.FORGOTTEN_PASSWORD,
+    context: {
+      name: user.name,
+      code: code,
+      email: user.email,
+      token: token,
+    },
   });
 
   return res.status(200).json({ email, token });
