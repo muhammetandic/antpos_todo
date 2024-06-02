@@ -1,7 +1,8 @@
 import nodemailer, { Transporter } from "nodemailer";
 import hbs, { NodemailerExpressHandlebarsOptions } from "nodemailer-express-handlebars";
+import { MailParameters } from "./types/mail-sender.js";
 
-export const transport: Transporter = nodemailer.createTransport({
+const transporter: Transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
     user: process.env.MAIL_USER,
@@ -9,13 +10,13 @@ export const transport: Transporter = nodemailer.createTransport({
   },
 });
 
-export const setMailOptions = (to: string, subject: string, template: string, context?: object) => ({
+const setMailOptions = (parameters: MailParameters) => ({
   from: `antpos-todo <process.env.MAIL_USER>`,
-  to,
-  subject,
-  template: template,
+  to: parameters.to,
+  subject: parameters.subject,
+  template: parameters.template,
   context: {
-    ...context,
+    ...parameters.context,
     app_url: process.env.NODE_ENV === "development" ? "http://localhost:3000" : "https://www.1stweb3.dev",
   },
 });
@@ -30,12 +31,16 @@ const handlebarOptions: NodemailerExpressHandlebarsOptions = {
   extName: ".html",
 };
 
-export async function sendEmail(to: string, subject: string, template: string, context: object) {
-  transport.use("compile", hbs(handlebarOptions));
+export const sendEmail = async (parameters: MailParameters): Promise<void> => {
+  transporter.use("compile", hbs(handlebarOptions));
 
-  const options = setMailOptions(to, subject, template, context);
+  const options = setMailOptions(parameters);
 
-  await transport.sendMail(options);
-
-  console.log("[nodemailer]: email sent successfully");
-}
+  try {
+    await transporter.sendMail(options);
+    console.log("[nodemailer]: email sent successfully");
+  } catch (error) {
+    console.log("[nodemailer]: failed to send email", error);
+    throw error;
+  }
+};
