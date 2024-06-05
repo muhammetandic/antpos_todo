@@ -1,0 +1,27 @@
+services:
+  antpos-todo:
+    build: ./
+    image: "antpos-todo"
+    container_name: antpos-todo
+    restart: always
+    ports:
+      - "5200:5200"
+    environment:
+      MONGO_URI: mongodb://mandic:deneme@mongo:27017/?appName=AntPosTodo
+      PORT: 5200
+      SECRET_KEY: "S3cr3tK3y"
+      JWT_SECRET: "S3cr3tK3y"
+      ENCRYPTION_METHOD: aes-256-cbc
+      MAIL_USER: muhammet.andic@gmail.com
+      MAIL_PASS: nwmylxiagxzbxymp
+    depends_on:
+      mongo:
+        condition: service_started
+  mongo:
+    image: mongo:latest
+    container_name: mongo
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: mandic
+      MONGO_INITDB_ROOT_PASSWORD: deneme

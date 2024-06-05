@@ -1,4 +1,6 @@
-FROM node:lts-alpine
+FROM node:lts-alpine as build
+
+EXPOSE 5200
 
 WORKDIR /api
 
@@ -9,13 +11,8 @@ RUN pnpm install
 
 COPY src ./src
 COPY tsconfig.json .
-COPY .env.production .
 
 RUN pnpm run build
-
-COPY ./dist .
-
-EXPOSE 5200
 
 CMD [ "npm", "start" ]
 
