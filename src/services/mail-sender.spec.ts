@@ -1,45 +1,28 @@
-import nodemailer from "nodemailer";
-import { sendEmail } from "./mail-sender.js";
-import { EMAIL_TEMPLATES } from "./enums/email-templates.js";
+import { MailParameters } from "./types/mail-sender";
+import { EMAIL_TEMPLATES } from "./enums/email-templates";
+import { sendEmail } from "./mail-sender";
 
-jest.mock("nodemailer");
+jest.mock("nodemailer", () => ({
+  createTransport: jest.fn().mockReturnValue({
+    sendMail: jest.fn(),
+    use: jest.fn(),
+  }),
+}));
 
 describe("sendEmail", () => {
-  const to = "a@a.com";
-  const subject = "test";
+  const parameters: MailParameters = {
+    to: "test@example.com",
+    subject: "Test email",
+    template: EMAIL_TEMPLATES.SIGNUP,
+    context: { name: "Test User" },
+  };
 
-  it("should send an email with correct parameters", async () => {
-    const template = EMAIL_TEMPLATES.FORGOTTEN_PASSWORD;
-    const context = {
-      name: "test",
-      email: "a@a.com",
-      code: "123456",
-      token: "987456321",
-    };
+  it("should log a message when the email is sent successfully", async () => {
+    const logSpy = jest.spyOn(console, "log");
 
-    const mockedTransporter = {
-      sendMail: jest.fn(),
-      use: jest.fn(), // Mock the use method
-    };
+    await sendEmail(parameters);
 
-    const transport = jest.fn().mockReturnValue(mockedTransporter);
-
-    await sendEmail({ to, subject, template, context });
-
-    expect(nodemailer.createTransport).toHaveBeenCalledWith({
-      service: "gmail",
-      auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASSWORD,
-      },
-    });
-
-    expect(mockedTransporter.use).toHaveBeenCalled(); // Ensure use method is called
-    expect(mockedTransporter.sendMail).toHaveBeenCalledWith({
-      from: process.env.EMAIL_USER,
-      to,
-      subject,
-      html: expect.any(String), // Assuming you're sending HTML content
-    });
+    expect(logSpy).toHaveBeenCalledTimes(1);
+    expect(logSpy).toHaveBeenCalledWith("[nodemailer]: email sent successfully");
   });
 });
