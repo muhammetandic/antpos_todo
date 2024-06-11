@@ -1,6 +1,7 @@
 import { Schema, model } from "mongoose";
+import { ISoftDeleted, IAuditable } from "../../abstracts/base-schemes.js";
 
-export interface IUser {
+export interface IUser extends ISoftDeleted, IAuditable {
   email: string;
   phone?: string;
   name: string;
@@ -9,9 +10,6 @@ export interface IUser {
   token?: string;
   tokenExpiresAt?: Date;
   code?: string;
-  isDeleted: boolean;
-  createdAt?: Date;
-  updatedAt?: Date;
 }
 
 const userSchema = new Schema<IUser>({
@@ -24,8 +22,10 @@ const userSchema = new Schema<IUser>({
   tokenExpiresAt: { type: Date, required: false },
   code: { type: String, required: false },
   isDeleted: { type: Boolean, required: true, default: false },
+  createdBy: { type: Schema.Types.ObjectId, ref: "User", required: false },
   createdAt: { type: Date, required: false, default: Date.now },
   updatedAt: { type: Date, required: false },
+  updatedBy: { type: Schema.Types.ObjectId, ref: "User", required: false },
 });
 
 export const User = model<IUser>("User", userSchema);
