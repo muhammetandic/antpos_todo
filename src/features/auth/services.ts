@@ -17,8 +17,9 @@ import { createCode } from "../../services/random-code-generator.js";
 import { sendEmail } from "../../services/mail-sender.js";
 import { EMAIL_TEMPLATES } from "../../services/enums/email-templates.js";
 
-const thirtyMinutes = 30 * 60 * 1000;
-const oneHour = 60 * 60 * 1000;
+const thirtyMinutesInMiliseconds = 30 * 60 * 1000;
+const thirtyMinutesInSeconds = 30 * 60;
+const tenMinutesInMiliseconds = 10 * 60 * 1000;
 
 const createToken = (email: string) =>
   createHash("sha256")
@@ -27,9 +28,9 @@ const createToken = (email: string) =>
 
 export const signIn = async (request: SignInRequest): Promise<Result<SignInResponse>> => {
   const { email, password } = request;
-  const expiresIn = new Date(Date.now() + oneHour);
+  const expiresIn = new Date(Date.now() + thirtyMinutesInMiliseconds);
 
-  const user = await User.findOne<IUser>({ email: email, isDeleted: false });
+  const user = await User.findOne({ email: email, isDeleted: false });
   if (!user) {
     return new Result(400, "user not found");
   }
@@ -38,7 +39,7 @@ export const signIn = async (request: SignInRequest): Promise<Result<SignInRespo
     return new Result(400, "incorrect password");
   }
 
-  const token = createJwtToken(email, oneHour);
+  const token = createJwtToken(user._id.toString(), email, thirtyMinutesInSeconds);
   const data = { email, token, expiresIn } as SignInResponse;
   return new Result(200, data);
 };
@@ -52,7 +53,7 @@ export const signUp = async (request: SignUpRequest): Promise<Result<SignUpRespo
   }
 
   const token = createToken(email);
-  const tokenExpiresAt = new Date(Date.now() + thirtyMinutes);
+  const tokenExpiresAt = new Date(Date.now() + tenMinutesInMiliseconds);
   const code = createCode();
 
   const user = new User<IUser>({
@@ -128,7 +129,7 @@ export const forgotPassword = async (request: ForgottenPasswordRequest): Promise
   }
 
   const token = createToken(email);
-  const tokenExpiresAt = new Date(Date.now() + thirtyMinutes);
+  const tokenExpiresAt = new Date(Date.now() + tenMinutesInMiliseconds);
   const code = createCode();
 
   await user.updateOne({ token, tokenExpiresAt, code, updatedAt: new Date(Date.now()) });

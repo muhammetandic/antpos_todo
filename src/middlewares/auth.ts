@@ -1,20 +1,20 @@
 import { NextFunction, Response, Request } from "express";
 import { verifyJwtToken } from "../services/jwt.js";
-import { JwtPayload } from "jsonwebtoken";
+import { ExtendedJwtPayload } from "../services/jwt.js";
 
-interface AuthenticatedRequest extends Request {
-  user: JwtPayload | string;
+export interface AuthenticatedRequest extends Request {
+  user: ExtendedJwtPayload;
 }
 
-export async function authMiddleware(req: Request, res: Response, next: NextFunction) {
+export function authMiddleware(req: Request, res: Response, next: NextFunction) {
   const token = req.headers.authorization?.slice(7);
   const cookie = req.cookies["token"];
   const accessToken = cookie ? cookie : token;
   try {
-    const user = await verifyJwtToken(accessToken);
+    const user = verifyJwtToken(accessToken) as ExtendedJwtPayload;
     (req as AuthenticatedRequest).user = user;
     next();
   } catch (error) {
-    res.status(401).json({ error: "unauthorized" });
+    res.status(401).json({ error });
   }
 }
