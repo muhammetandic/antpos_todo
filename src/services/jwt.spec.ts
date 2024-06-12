@@ -1,7 +1,7 @@
 import { createJwtToken, verifyJwtToken } from "./jwt.js";
-import { JwtPayload } from "jsonwebtoken";
 
 describe("createJwtToken", () => {
+  const userId = "132165465abf";
   const email = "test@example.com";
   const expireDurationThirtyMinutes = 30 * 60 * 1000;
   it("should throw error if secretOrPrivateKey is blank", () => {
@@ -9,7 +9,7 @@ describe("createJwtToken", () => {
     process.env.JWT_SECRET = "";
 
     expect(() => {
-      createJwtToken(email, expireDurationThirtyMinutes);
+      createJwtToken(userId, email, expireDurationThirtyMinutes);
     }).toThrow("secretOrPrivateKey must have a value");
   });
 
@@ -17,24 +17,25 @@ describe("createJwtToken", () => {
     // mocking process.env.JWT_SECRET
     process.env.JWT_SECRET = "test-secret";
 
-    const token = createJwtToken(email, expireDurationThirtyMinutes);
+    const token = createJwtToken(userId, email, expireDurationThirtyMinutes);
     expect(token).toBeDefined();
     expect(typeof token).toBe("string");
   });
 });
 
 describe("verifyJwtToken", () => {
+  const userId = "132165465abf";
   const email = "test@example.com";
   const expireDurationThirtyMinutes = 30 * 60 * 1000;
   let token = "";
 
   beforeAll(() => {
     process.env.JWT_SECRET = "test-secret";
-    token = createJwtToken(email, expireDurationThirtyMinutes);
+    token = createJwtToken(userId, email, expireDurationThirtyMinutes);
   });
 
-  it("should verify a JWT token", async () => {
-    const verifiedToken = await verifyJwtToken(token);
+  it("should verify a JWT token", () => {
+    const verifiedToken = verifyJwtToken(token);
     expect(verifiedToken).toBeDefined();
     expect(typeof verifiedToken).toBe("object");
   });
