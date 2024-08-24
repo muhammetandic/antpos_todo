@@ -17,9 +17,9 @@ import { createCode } from "../../services/random-code-generator.js";
 import { sendEmail } from "../../services/mail-sender.js";
 import { EMAIL_TEMPLATES } from "../../services/enums/email-templates.js";
 
-const thirtyMinutesInMiliseconds = 30 * 60 * 1000;
+const thirtyMinutesInMilliseconds = 30 * 60 * 1000;
 const thirtyMinutesInSeconds = 30 * 60;
-const tenMinutesInMiliseconds = 10 * 60 * 1000;
+const tenMinutesInMilliseconds = 10 * 60 * 1000;
 
 const createToken = (email: string) =>
   createHash("sha256")
@@ -28,7 +28,7 @@ const createToken = (email: string) =>
 
 export const signIn = async (request: SignInRequest): Promise<Result<SignInResponse>> => {
   const { email, password } = request;
-  const expiresIn = new Date(Date.now() + thirtyMinutesInMiliseconds);
+  const expiresIn = new Date(Date.now() + thirtyMinutesInMilliseconds);
 
   const user = await User.findOne({ email: email, isDeleted: false });
   if (!user) {
@@ -53,7 +53,7 @@ export const signUp = async (request: SignUpRequest): Promise<Result<SignUpRespo
   }
 
   const token = createToken(email);
-  const tokenExpiresAt = new Date(Date.now() + tenMinutesInMiliseconds);
+  const tokenExpiresAt = new Date(Date.now() + tenMinutesInMilliseconds);
   const code = createCode();
 
   const user = new User<IUser>({
@@ -129,7 +129,7 @@ export const forgotPassword = async (request: ForgottenPasswordRequest): Promise
   }
 
   const token = createToken(email);
-  const tokenExpiresAt = new Date(Date.now() + tenMinutesInMiliseconds);
+  const tokenExpiresAt = new Date(Date.now() + tenMinutesInMilliseconds);
   const code = createCode();
 
   await user.updateOne({ token, tokenExpiresAt, code, updatedAt: new Date(Date.now()) });
