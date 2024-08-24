@@ -1,0 +1,23 @@
+meta {
+  name: update
+  type: http
+  seq: 4
+}
+
+put {
+  url: {{url}}/api/todos/{{todo-id}}
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{access-token}}
+}
+
+body:json {
+  {
+      "title": "deneme düzeltmesi",
+      "description": "bu bir düzeltmedir.",
+      "isCompleted": false
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "version": "1",
+  "name": "antpos",
+  "type": "collection",
+  "ignore": [
+    "node_modules",
+    ".git"
+  ]
+}

@@ -1,0 +1,24 @@
+meta {
+  name: sign-in
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{url}}/auth/signin
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "email": "muhammet.andic@gmail.com",
+    "password": "deneme"
+  }
+}
+
+script:post-response {
+  var response = res.getBody();
+  bru.setEnvVar("access-token", response.data.token);
+  bru.setEnvVar("email",response.data.email);
+}
