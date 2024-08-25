@@ -1,15 +1,15 @@
 import express, { Router, Response, Request } from "express";
-import { asyncHandler } from "../../helpers/value-objects/asyncHandler.js";
-import { TypedRequestBody } from "../../helpers/value-objects/request.js";
-import { CreateTodoRequest } from "./models.js";
 import { createTodo, getAllTodos, getTodoById, updateTodo, deleteTodo, toggleTodo } from "./services.js";
 import { AuthenticatedRequest } from "../../middlewares/auth.js";
+import { asyncHandler } from "../../helpers/asyncHandler.js";
+import { TypedRequestBody } from "../../helpers/request.js";
+import { TodoDto } from "./models.js";
 
-export const todoRouter: Router = express.Router();
+export const todoRoutes: Router = express.Router();
 
-todoRouter.post(
+todoRoutes.post(
   "/",
-  asyncHandler(async (req: TypedRequestBody<CreateTodoRequest>, res: Response) => {
+  asyncHandler(async (req: TypedRequestBody<TodoDto>, res: Response) => {
     const request = req.body;
     const user = (req as AuthenticatedRequest).user;
 
@@ -23,7 +23,7 @@ todoRouter.post(
   }),
 );
 
-todoRouter.get(
+todoRoutes.get(
   "/",
   asyncHandler(async (req: Request, res: Response) => {
     const user = (req as AuthenticatedRequest).user;
@@ -38,7 +38,7 @@ todoRouter.get(
   }),
 );
 
-todoRouter.get(
+todoRoutes.get(
   "/:id",
   asyncHandler(async (req: Request, res: Response) => {
     const user = (req as AuthenticatedRequest).user;
@@ -53,7 +53,7 @@ todoRouter.get(
   }),
 );
 
-todoRouter.put(
+todoRoutes.put(
   "/:id",
   asyncHandler(async (req: Request, res: Response) => {
     const user = (req as AuthenticatedRequest).user;
@@ -68,7 +68,7 @@ todoRouter.put(
   }),
 );
 
-todoRouter.delete(
+todoRoutes.delete(
   "/:id",
   asyncHandler(async (req: Request, res: Response) => {
     const user = (req as AuthenticatedRequest).user;
@@ -82,7 +82,7 @@ todoRouter.delete(
   }),
 );
 
-todoRouter.patch(
+todoRoutes.put(
   "/:id",
   asyncHandler(async (req: Request, res: Response) => {
     const user = (req as AuthenticatedRequest).user;

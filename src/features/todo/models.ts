@@ -1,4 +1,4 @@
-export type CreateTodoRequest = {
+export type TodoDto = {
   title: string;
   description?: string;
   isCompleted: boolean;
@@ -6,12 +6,6 @@ export type CreateTodoRequest = {
 
 export type CreateTodoResponse = {
   id: string;
-};
-
-export type UpdateTodoRequest = {
-  title: string;
-  description?: string;
-  isCompleted: boolean;
 };
 
 export type EmptyResponse = Record<string, never>;

@@ -1,16 +1,16 @@
 import express, { Router, Response } from "express";
 import { SignInRequest, SignUpRequest, SetPasswordRequest, ForgottenPasswordRequest } from "./models.js";
-import { TypedRequestBody } from "../../helpers/value-objects/request.js";
-import { asyncHandler } from "../../helpers/value-objects/asyncHandler.js";
-import { signIn, signUp, forgotPassword, setPassword } from "./services.js";
+import { forgotPasswordAsync, setPasswordAsync, signInAsync, signUpAsync } from "./services.js";
+import { asyncHandler } from "../../helpers/asyncHandler.js";
+import { TypedRequestBody } from "../../helpers/request.js";
 
-export const authRouter: Router = express.Router();
+export const authRoutes: Router = express.Router();
 
-authRouter.post(
+authRoutes.post(
   "/signin",
   asyncHandler(async (req: TypedRequestBody<SignInRequest>, res: Response) => {
     const request = req.body;
-    const result = await signIn(request);
+    const result = await signInAsync(request);
 
     if (result.error) {
       return res.status(result.status).json({ success: false, error: result.error });
@@ -23,11 +23,11 @@ authRouter.post(
   }),
 );
 
-authRouter.post(
+authRoutes.post(
   "/signup",
   asyncHandler(async (req: TypedRequestBody<SignUpRequest>, res: Response) => {
     const request = req.body;
-    const result = await signUp(request);
+    const result = await signUpAsync(request);
 
     if (result.error) {
       return res.status(result.status).json({ success: false, error: result.error });
@@ -36,11 +36,11 @@ authRouter.post(
   }),
 );
 
-authRouter.post(
+authRoutes.post(
   "/setpassword",
   asyncHandler(async (req: TypedRequestBody<SetPasswordRequest>, res: Response) => {
     const request = req.body;
-    const result = await setPassword(request);
+    const result = await setPasswordAsync(request);
 
     if (result.error) {
       return res.status(result.status).json({ success: false, error: result.error });
@@ -49,11 +49,11 @@ authRouter.post(
   }),
 );
 
-authRouter.post(
+authRoutes.post(
   "/forgotpassword",
   asyncHandler(async (req: TypedRequestBody<ForgottenPasswordRequest>, res: Response) => {
     const request = req.body;
-    const result = await forgotPassword(request);
+    const result = await forgotPasswordAsync(request);
 
     if (result.error) {
       return res.status(result.status).json({ success: false, error: result.error });

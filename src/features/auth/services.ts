@@ -16,6 +16,7 @@ import {
 import { createCode } from "../../services/random-code-generator.js";
 import { sendEmail } from "../../services/mail-sender.js";
 import { EMAIL_TEMPLATES } from "../../services/enums/email-templates.js";
+import { status } from "../../helpers/response.js";
 
 const thirtyMinutesInMilliseconds = 30 * 60 * 1000;
 const thirtyMinutesInSeconds = 30 * 60;
@@ -26,30 +27,30 @@ const createToken = (email: string) =>
     .update(email + Date.now())
     .digest("hex");
 
-export const signIn = async (request: SignInRequest): Promise<Result<SignInResponse>> => {
+export const signInAsync = async (request: SignInRequest): Promise<Result<SignInResponse>> => {
   const { email, password } = request;
   const expiresIn = new Date(Date.now() + thirtyMinutesInMilliseconds);
 
   const user = await User.findOne({ email: email, isDeleted: false });
   if (!user) {
-    return new Result(400, "user not found");
+    return new Result(status.NotFound, "user not found");
   }
 
   if (password !== decrypt(user?.password || "", user?.salt || "")) {
-    return new Result(400, "incorrect password");
+    return new Result(status.BadRequest, "incorrect password");
   }
 
   const token = createJwtToken(user._id.toString(), email, thirtyMinutesInSeconds);
   const data = { email, token, expiresIn } as SignInResponse;
-  return new Result(200, data);
+  return new Result(status.Ok, data);
 };
 
-export const signUp = async (request: SignUpRequest): Promise<Result<SignUpResponse>> => {
+export const signUpAsync = async (request: SignUpRequest): Promise<Result<SignUpResponse>> => {
   const { email, name } = request;
 
   const isExist = await User.findOne<IUser>({ email: email, isDeleted: false });
   if (isExist) {
-    return new Result(400, "email already exist");
+    return new Result(status.BadRequest, "email already exist");
   }
 
   const token = createToken(email);
@@ -80,32 +81,32 @@ export const signUp = async (request: SignUpRequest): Promise<Result<SignUpRespo
     },
   });
 
-  return new Result(200, { email, token });
+  return new Result(status.Ok, { email, token });
 };
 
-export const setPassword = async (request: SetPasswordRequest): Promise<Result<SetPasswordResponse>> => {
+export const setPasswordAsync = async (request: SetPasswordRequest): Promise<Result<SetPasswordResponse>> => {
   const { email, token, code, password } = request;
   const user = await User.findOne({ email: email, isDeleted: false });
   if (!user) {
-    return new Result(400, "user not found");
+    return new Result(status.NotFound, "user not found");
   }
 
   if (user?.token !== token) {
-    return new Result(400, "invalid token");
+    return new Result(status.BadRequest, "invalid token");
   }
 
   if (user?.tokenExpiresAt && user?.tokenExpiresAt.getTime() < Date.now()) {
-    return new Result(400, "token expired");
+    return new Result(status.BadRequest, "token expired");
   }
 
   if (user?.code !== code) {
-    return new Result(400, "invalid code");
+    return new Result(status.BadRequest, "invalid code");
   }
 
   const encrypted = encrypt(password);
 
   if (encrypted === null) {
-    return new Result(400, "password encryption failed");
+    return new Result(status.InternalServerError, "password encryption failed");
   }
 
   await user.updateOne({
@@ -117,15 +118,17 @@ export const setPassword = async (request: SetPasswordRequest): Promise<Result<S
     updatedAt: new Date(Date.now()),
   });
 
-  return new Result(200, {});
+  return new Result(status.Ok, {});
 };
 
-export const forgotPassword = async (request: ForgottenPasswordRequest): Promise<Result<ForgottenPasswordResponse>> => {
+export const forgotPasswordAsync = async (
+  request: ForgottenPasswordRequest,
+): Promise<Result<ForgottenPasswordResponse>> => {
   const { email } = request;
   const user = await User.findOne({ email: email, isDeleted: false });
 
   if (!user) {
-    return new Result(400, "user not found");
+    return new Result(status.NotFound, "user not found");
   }
 
   const token = createToken(email);
@@ -147,5 +150,5 @@ export const forgotPassword = async (request: ForgottenPasswordRequest): Promise
   });
 
   const data = { email, token } as ForgottenPasswordResponse;
-  return new Result(200, data);
+  return new Result(status.Ok, data);
 };
