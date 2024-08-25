@@ -1,0 +1,31 @@
+meta {
+  name: create
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{url}}/api/addresses
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{access-token}}
+}
+
+body:json {
+  {
+    "phone": "+905465931533",
+    "email": "muhammet.andic@gmail.com",
+    "addressLine1": "büyükada sit.",
+    "district": "Kepez",
+    "city": "Antalya",
+    "identityNumber": 12345678901
+  }
+}
+
+script:post-response {
+  const response =res.getBody();
+  bru.setEnvVar("address-id",response.data.id);
+}
