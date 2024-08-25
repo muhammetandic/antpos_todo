@@ -1,13 +1,15 @@
 import express, { Router } from "express";
-import { todoRouter } from "./features/todo/routes.js";
-import { authRouter } from "./features/auth/routes.js";
+import { todoRoutes } from "./features/todo/routes.js";
+import { authRoutes } from "./features/auth/routes.js";
 import { authMiddleware } from "./middlewares/auth.js";
+import { addressRoutes } from "./features/address/routes.js";
 
 export const router = express.Router();
-const apiRouter: Router = express.Router();
+const apiRoutes: Router = express.Router();
 
-apiRouter.use(authMiddleware);
-apiRouter.use("/todos", todoRouter);
+apiRoutes.use(authMiddleware);
+apiRoutes.use("/todos", todoRoutes);
+apiRoutes.use("/addresses", addressRoutes);
 
-router.use("/auth", authRouter);
-router.use("/api", apiRouter);
+router.use("/auth", authRoutes);
+router.use("/api", apiRoutes);
