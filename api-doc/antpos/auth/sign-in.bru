@@ -10,15 +10,19 @@ post {
   auth: none
 }
 
+params:query {
+  ~useCookies: true
+  ~useSessionCookies: false
+}
+
 body:json {
   {
-    "email": "muhammet.andic@gmail.com",
-    "password": "deneme"
+    "email": "m_andic@hotmail.com",
+    "password": "Deneme.123"
   }
 }
 
 script:post-response {
-  var response = res.getBody();
-  bru.setEnvVar("access-token", response.data.token);
-  bru.setEnvVar("email",response.data.email);
+  const data = res.getBody();
+  bru.setEnvVar("access-token",data.data.token);
 }

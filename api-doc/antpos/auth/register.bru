@@ -1,0 +1,19 @@
+meta {
+  name: register
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{url}}/auth/signup
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "email": "m_andic@hotmail.com",
+    "password": "Deneme.123",
+    "name": "Muhammet Andiç"
+  }
+}

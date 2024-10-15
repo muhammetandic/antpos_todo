@@ -19,7 +19,6 @@ app.use(urlEncodedParser);
 app.use(morgan("common"));
 
 app.use(router);
-
 app.use(errorHandler);
 
 await connectMongo();

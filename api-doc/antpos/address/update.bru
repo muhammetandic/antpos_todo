@@ -1,0 +1,24 @@
+meta {
+  name: update
+  type: http
+  seq: 4
+}
+
+put {
+  url: {{url}}/api/addresses/{{address-id}}
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "id": "66cb93c0ca08fec9922c9154",
+    "phone": "+905465931533",
+    "email": "muhammet.andic@gmail.com",
+    "addressLine1": "büyükada sit. a4 blok no:12",
+    "district": "Kepez",
+    "city": "Antalya",
+    "country": "TR",
+    "identityNumber": "12345678901"
+  }
+}
