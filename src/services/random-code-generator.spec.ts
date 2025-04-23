@@ -1,4 +1,4 @@
-import { createCode } from "./random-code-generator.js";
+import { createCode } from "./random-code-generator";
 
 describe("code generator", () => {
   it("should generate six digit code in string form", () => {

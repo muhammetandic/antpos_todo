@@ -1,4 +1,4 @@
-import { encrypt, decrypt } from "./crypt.js";
+import { encrypt, decrypt } from "./crypt";
 
 describe("encrypt", () => {
   it("should encrypt the plain text", () => {

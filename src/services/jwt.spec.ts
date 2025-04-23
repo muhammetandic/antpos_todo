@@ -1,4 +1,4 @@
-import { createJwtToken, verifyJwtToken } from "./jwt.js";
+import { createJwtToken, verifyJwtToken } from "./jwt";
 
 describe("createJwtToken", () => {
   const userId = "132165465abf";
