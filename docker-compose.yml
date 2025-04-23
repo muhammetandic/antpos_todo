@@ -18,7 +18,7 @@ services:
       mongo:
         condition: service_started
   mongo:
-    image: mongo:latest
+    image: docker.io/mongodb/mongodb-community-server:latest
     container_name: mongo
     ports:
       - "27017:27017"
