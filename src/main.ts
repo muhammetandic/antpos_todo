@@ -12,6 +12,11 @@ const urlEncodedParser = express.urlencoded({ extended: false });
 
 const app: Express = express();
 
+const healthRoute = express.Router();
+healthRoute.get("/health", (req: Request, res: Response) => {
+  return res.status(200).json({ status: "ok" });
+});
+
 app.use(cors());
 app.use(jsonParser);
 app.use(cookieParser());
