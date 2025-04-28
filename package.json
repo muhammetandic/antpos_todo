@@ -7,7 +7,7 @@
     "pre:dev": "tsc --watch --project .",
     "dev": "node --watch --env-file=.env.development dist/main.js",
     "build": "tsc --project .",
-    "start": "node dist/index.js",
+    "start": "node dist/main.js",
     "test": "vitest"
   },
   "author": "AntPos",
