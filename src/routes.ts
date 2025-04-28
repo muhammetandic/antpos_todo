@@ -10,6 +10,9 @@ const apiRoutes: Router = express.Router();
 apiRoutes.use(authMiddleware);
 apiRoutes.use("/todos", todoRoutes);
 apiRoutes.use("/addresses", addressRoutes);
+apiRoutes.get("/health-check", (_, res) => {
+  res.json({ success: true, message: "Server is healthy" });
+});
 
 router.use("/auth", authRoutes);
 router.use("/api", apiRoutes);
